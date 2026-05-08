@@ -1,0 +1,66 @@
+app:
+  name: BTController
+  version: 1.0
+  permissions:
+    - bluetooth
+    - bluetooth_scan
+    - bluetooth_connect
+    - location
+
+screen: ScanScreen
+  background: "#121212"
+
+  text:
+    value: "Find Devices"
+    size: 24
+    bold: true
+    color: "#FFFFFF"
+
+  button:
+    label: "Start Scan"
+    color: "#00C853"
+    on_click:
+      - call: bluetooth.scan(duration=10)
+
+  list:
+    id: device_list
+    source: found_devices
+    empty_text: "No devices found yet..."
+    item_template:
+      text: $device.name
+      subtext: $device.mac_address
+      icon: bluetooth
+      on_tap:
+        - run_script: attempt_connect
+
+  script: attempt_connect
+    steps:
+      - show_toast: "Connecting to $tapped_device.name"
+      - call: bluetooth.connect($tapped_device.mac)
+      - if: bluetooth.status == connected
+          then:
+            - store: active_device = $tapped_device
+            - navigate: ControlScreen
+          else:
+            - show_toast: "Could not connect"
+
+screen: ControlScreen
+  background: "#121212"
+
+  text:
+    value: "Connected to $active_device.name"
+    size: 20
+    color: "#FFFFFF"
+
+  button:
+    label: "Send Ping"
+    color: "#4A90E2"
+    on_click:
+      - call: bluetooth.send(data="PING")
+
+  button:
+    label: "Disconnect"
+    color: "#FF1744"
+    on_click:
+      - call: bluetooth.disconnect()
+      - navigate: ScanScreen

@@ -1,0 +1,122 @@
+{
+  "app": {
+    "name": "LoginApp",
+    "version": "1.0",
+    "entry_screen": "LoginScreen"
+  },
+  "screens": [
+    {
+      "name": "LoginScreen",
+      "background": "#FFFFFF",
+      "components": [
+        {
+          "type": "text",
+          "value": "Welcome Back",
+          "size": 28,
+          "bold": true,
+          "align": "center",
+          "color": "#111111"
+        },
+        {
+          "type": "input",
+          "id": "username_field",
+          "hint": "Enter your email",
+          "input_type": "email"
+        },
+        {
+          "type": "input",
+          "id": "password_field",
+          "hint": "Enter your password",
+          "input_type": "password"
+        },
+        {
+          "type": "button",
+          "label": "Login",
+          "color": "#4A90E2",
+          "on_click": [
+            {
+              "action": "validate",
+              "fields": [
+                "username_field",
+                "password_field"
+              ]
+            },
+            {
+              "action": "navigate",
+              "target": "HomeScreen"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "label": "Forgot Password?",
+          "navigate": "ResetScreen"
+        }
+      ]
+    },
+    {
+      "name": "HomeScreen",
+      "background": "#F5F5F5",
+      "components": [
+        {
+          "type": "text",
+          "value": "You are logged in",
+          "size": 22,
+          "bold": true
+        },
+        {
+          "type": "button",
+          "label": "Logout",
+          "color": "#FF4444",
+          "on_click": [
+            {
+              "action": "navigate",
+              "target": "LoginScreen"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ResetScreen",
+      "background": "#FFFFFF",
+      "components": [
+        {
+          "type": "text",
+          "value": "Reset Password",
+          "size": 22,
+          "bold": true
+        },
+        {
+          "type": "input",
+          "id": "reset_email",
+          "hint": "Enter your email",
+          "input_type": "email"
+        },
+        {
+          "type": "button",
+          "label": "Send Reset Link",
+          "color": "#4A90E2",
+          "on_click": [
+            {
+              "action": "validate",
+              "fields": [
+                "reset_email"
+              ]
+            },
+            {
+              "action": "show_toast",
+              "message": "Reset link sent!"
+            },
+            {
+              "action": "navigate",
+              "target": "LoginScreen"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scripts": [],
+  "services_required": []
+}

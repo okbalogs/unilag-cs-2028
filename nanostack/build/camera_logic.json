@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "CameraApp",
+    "version": "1.0",
+    "entry_screen": "HomeScreen"
+  },
+  "screens": [
+    {
+      "name": "HomeScreen",
+      "background": "#000000",
+      "components": [
+        {
+          "type": "text",
+          "value": "Camera App",
+          "size": 26,
+          "bold": true,
+          "color": "#FFFFFF",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "label": "Take Photo",
+          "color": "#4A90E2",
+          "on_click": [
+            {
+              "action": "call",
+              "method": "camera.capture_photo()"
+            },
+            {
+              "action": "on_success",
+              "value": null
+            },
+            {
+              "action": "on_fail",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PreviewScreen",
+      "background": "#000000",
+      "components": [
+        {
+          "type": "image",
+          "source": "$last_photo",
+          "width": "full",
+          "height": 300
+        },
+        {
+          "type": "button",
+          "label": "Save Photo",
+          "color": "#00C853",
+          "on_click": [
+            {
+              "action": "call",
+              "method": "storage.save($last_photo)"
+            },
+            {
+              "action": "show_toast",
+              "message": "Photo saved!"
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "label": "Retake",
+          "color": "#FF4444",
+          "on_click": [
+            {
+              "action": "navigate",
+              "target": "HomeScreen"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scripts": [],
+  "services_required": [
+    "camera",
+    "storage"
+  ]
+}

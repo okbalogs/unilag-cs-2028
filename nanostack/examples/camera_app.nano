@@ -1,0 +1,48 @@
+app:
+  name: CameraApp
+  version: 1.0
+  permissions:
+    - camera
+    - storage
+
+screen: HomeScreen
+  background: "#000000"
+
+  text:
+    value: "Camera App"
+    size: 26
+    bold: true
+    color: "#FFFFFF"
+    align: center
+
+  button:
+    label: "Take Photo"
+    color: "#4A90E2"
+    on_click:
+      - call: camera.capture_photo()
+      - on_success:
+          - store: last_photo
+          - navigate: PreviewScreen
+      - on_fail:
+          - show_toast: "Camera unavailable"
+
+screen: PreviewScreen
+  background: "#000000"
+
+  image:
+    source: $last_photo
+    width: full
+    height: 300
+
+  button:
+    label: "Save Photo"
+    color: "#00C853"
+    on_click:
+      - call: storage.save($last_photo)
+      - show_toast: "Photo saved!"
+
+  button:
+    label: "Retake"
+    color: "#FF4444"
+    on_click:
+      - navigate: HomeScreen
