@@ -1,0 +1,74 @@
+name: Build Runner APK
+
+on:
+  # Trigger manually from the GitHub Actions UI any time
+  workflow_dispatch:
+
+  # Also trigger automatically when runner source changes on main
+  push:
+    branches: [main]
+    paths:
+      - 'nanostack/runner/**'
+
+permissions:
+  contents: write   # needed to commit runner.apk back to the repo
+
+jobs:
+  build-runner:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Use a PAT or the default GITHUB_TOKEN with write access
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('nanostack/runner/**/*.gradle*', 'nanostack/runner/**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x nanostack/runner/gradlew
+
+      - name: Build debug APK
+        run: |
+          cd nanostack/runner
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Copy APK to bin/
+        run: |
+          cp nanostack/runner/app/build/outputs/apk/debug/app-debug.apk \
+             nanostack/bin/runner.apk
+          echo "APK size: $(du -h nanostack/bin/runner.apk | cut -f1)"
+
+      - name: Upload APK as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-apk
+          path: nanostack/bin/runner.apk
+          retention-days: 90
+
+      - name: Commit runner.apk to repository
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add nanostack/bin/runner.apk
+          # Only commit if the APK actually changed
+          git diff --cached --quiet || \
+            git commit -m "ci: update runner.apk [skip ci]" && \
+            git push

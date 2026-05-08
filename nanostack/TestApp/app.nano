@@ -1,0 +1,19 @@
+app:
+  name: TestApp
+  version: 1.0
+
+screen: HomeScreen
+  background: "#FFFFFF"
+
+  text:
+    value: "Hello from TestApp"
+    size: 26
+    bold: true
+    align: center
+    color: "#111111"
+
+  button:
+    label: "Get Started"
+    color: "#4A90E2"
+    on_click:
+      - show_toast: "Welcome!"

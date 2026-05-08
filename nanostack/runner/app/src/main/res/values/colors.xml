@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="nano_primary">#4A90E2</color>
+    <color name="nano_accent">#00C853</color>
+    <color name="nano_white">#FFFFFF</color>
+    <color name="nano_dark">#111111</color>
+    <color name="nano_grey">#AAAAAA</color>
+    <color name="nano_error">#FF4444</color>
+</resources>
