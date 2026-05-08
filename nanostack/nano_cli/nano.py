@@ -36,32 +36,26 @@ _GREEN = "\033[92m"
 _RED   = "\033[91m"
 _RESET = "\033[0m"
 
-_RUNNER_APK = _REPO_ROOT / "bin" / "runner.apk"
+_RUNNER_APK    = _REPO_ROOT / "bin" / "runner.apk"
+_STARTER_NANO  = _REPO_ROOT / "templates" / "starter.nano"
 
 # ── starter templates ─────────────────────────────────────────────────────────
 
 def _starter_nano(app_name: str) -> str:
-    return f"""\
-app:
-  name: {app_name}
-  version: 1.0
-
-screen: HomeScreen
-  background: "#FFFFFF"
-
-  text:
-    value: "Hello from {app_name}"
-    size: 26
-    bold: true
-    align: center
-    color: "#111111"
-
-  button:
-    label: "Get Started"
-    color: "#4A90E2"
-    on_click:
-      - show_toast: "Welcome!"
-"""
+    """Return the starter app.nano content, reading from the template file."""
+    try:
+        template = _STARTER_NANO.read_text(encoding="utf-8")
+        return template.replace("{app_name}", app_name)
+    except OSError:
+        # Inline fallback if the package was installed without templates/
+        return (
+            f"app:\n  name: {app_name}\n  version: 1.0\n\n"
+            f"screen: HomeScreen\n  background: \"#FFFFFF\"\n\n"
+            f"  text:\n    value: \"Hello from {app_name}\"\n"
+            f"    size: 26\n    bold: true\n    align: center\n    color: \"#111111\"\n\n"
+            f"  button:\n    label: \"Get Started\"\n    color: \"#4A90E2\"\n"
+            f"    on_click:\n      - show_toast: \"Welcome!\"\n"
+        )
 
 
 def _starter_config(app_name: str) -> dict:
