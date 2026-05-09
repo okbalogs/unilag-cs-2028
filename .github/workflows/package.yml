@@ -1,0 +1,38 @@
+name: Package
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build distribution packages
+        working-directory: nanostack
+        run: python -m build
+
+      - name: Verify dist/ folder contents
+        working-directory: nanostack
+        run: |
+          ls -lh dist/
+          test -n "$(ls dist/*.whl 2>/dev/null)"   && echo "wheel OK"
+          test -n "$(ls dist/*.tar.gz 2>/dev/null)" && echo "sdist OK"
+
+      - name: Check distribution with twine
+        working-directory: nanostack
+        run: twine check dist/*

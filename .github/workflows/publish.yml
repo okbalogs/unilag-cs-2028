@@ -1,11 +1,11 @@
-name: Package
+name: Publish to PyPI
 
 on:
-  push:
-    branches: [main]
+  release:
+    types: [published]
 
 jobs:
-  build-package:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,13 +23,12 @@ jobs:
           pip install build twine
 
       - name: Build distribution packages
+        working-directory: nanostack
         run: python -m build
 
-      - name: Verify dist/ folder contents
-        run: |
-          ls -lh dist/
-          test -n "$(ls dist/*.whl 2>/dev/null)"  && echo "wheel OK"
-          test -n "$(ls dist/*.tar.gz 2>/dev/null)" && echo "sdist OK"
-
-      - name: Check distribution with twine
-        run: twine check dist/*
+      - name: Publish to PyPI
+        working-directory: nanostack
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload dist/*
