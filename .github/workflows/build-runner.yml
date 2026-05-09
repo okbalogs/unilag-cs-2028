@@ -1,17 +1,14 @@
 name: Build Runner APK
 
 on:
-  # Trigger manually from the GitHub Actions UI any time
   workflow_dispatch:
-
-  # Also trigger automatically when runner source changes on main
   push:
     branches: [main]
     paths:
       - 'nanostack/runner/**'
 
 permissions:
-  contents: write   # needed to commit runner.apk back to the repo
+  contents: write
 
 jobs:
   build-runner:
@@ -21,7 +18,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Use a PAT or the default GITHUB_TOKEN with write access
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up JDK 17
@@ -68,7 +64,5 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add nanostack/bin/runner.apk
-          # Only commit if the APK actually changed
           git diff --cached --quiet || \
-            git commit -m "ci: update runner.apk [skip ci]" && \
-            git push
+            (git commit -m "ci: update runner.apk [skip ci]" && git push)

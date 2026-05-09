@@ -25,4 +25,5 @@ jobs:
           pip install pytest pyyaml click rich colorama
 
       - name: Run test suite
+        working-directory: nanostack
         run: pytest tests/ -v --tb=short
